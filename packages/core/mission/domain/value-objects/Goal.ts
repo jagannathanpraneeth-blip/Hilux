@@ -55,7 +55,7 @@ export class Goal extends ValueObject<GoalProps> {
     return new Goal({ ...this.props, embeddingVector: vector });
   }
 
-  toString(): string {
+  override toString(): string {
     return this.props.text;
   }
 }

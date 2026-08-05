@@ -100,11 +100,11 @@ export interface EscalationRequest {
   targetManagerId: string;
   urgency: 'low' | 'medium' | 'high' | 'critical';
   context: string;
-  blockedTask?: string;
-  recommendation?: string;
+  blockedTask?: string | undefined;
+  recommendation?: string | undefined;
   createdAt: Date;
-  resolvedAt?: Date;
-  resolution?: string;
+  resolvedAt?: Date | undefined;
+  resolution?: string | undefined;
 }
 
 export interface WorkerProfile {
@@ -114,7 +114,7 @@ export interface WorkerProfile {
   department: string;
   seniority: 'junior' | 'mid' | 'senior' | 'principal' | 'executive';
   hiredAt: Date;
-  managerId?: string;
+  managerId?: string | undefined;
   directReports: string[];
   specializations: string[];
   autonomyLevel: AutonomyLevel;
@@ -242,6 +242,8 @@ export abstract class BaseWorker extends EventEmitter {
     if (pending.length === 0) return;
 
     const goal = pending[0];
+    if (!goal) return;
+
     goal.status = 'active';
     this.status = 'working';
     this.activeTaskId = goal.goalId;
@@ -321,7 +323,7 @@ export abstract class BaseWorker extends EventEmitter {
   protected async performReflection(context: {
     taskId: string;
     taskOutput: unknown;
-    goal?: WorkerGoal;
+    goal?: WorkerGoal | undefined;
     context: unknown;
     myRole: string;
     mySpecializations: string[];
@@ -457,7 +459,7 @@ export abstract class BaseWorker extends EventEmitter {
         await this.acceptGoal(message['goal'] as WorkerGoal);
         break;
       case 'escalation_resolved':
-        await this.handleEscalationResolution(message as EscalationRequest);
+        await this.handleEscalationResolution(message as unknown as EscalationRequest);
         break;
       case 'performance_review':
         await this.handlePerformanceReview(message);
@@ -505,9 +507,12 @@ export abstract class BaseWorker extends EventEmitter {
     const autonomyLevels: AutonomyLevel[] = ['supervised', 'guided', 'independent', 'executive'];
     const currentIndex = autonomyLevels.indexOf(this.profile.autonomyLevel);
 
-    if (currentIndex >= autonomyLevels.length - 1) return false;
+    if (currentIndex < 0 || currentIndex >= autonomyLevels.length - 1) return false;
 
-    (this.profile as { autonomyLevel: AutonomyLevel }).autonomyLevel = autonomyLevels[currentIndex + 1];
+    const nextLevel = autonomyLevels[currentIndex + 1];
+    if (!nextLevel) return false;
+
+    (this.profile as { autonomyLevel: AutonomyLevel }).autonomyLevel = nextLevel;
     this.decisionEngine.setAutonomyLevel(this.profile.autonomyLevel);
 
     this.emit('autonomy_upgraded', {
@@ -750,7 +755,14 @@ export abstract class BaseWorker extends EventEmitter {
 
     await this.knowledgeBase.bulkStore(
       allKnowledge.map(k => ({
-        ...k,
+        type: (k.type as any) ?? 'learning',
+        content: typeof k.content === 'string' ? k.content : JSON.stringify(k.content),
+        domain: this.profile.department,
+        confidence: 0.85,
+        contributor: this.profile.workerId,
+        contributorRole: this.profile.role,
+        department: this.profile.department,
+        timestamp: new Date(),
         source: `worker:${this.profile.workerId}:${this.profile.role}`,
         preservedAt: new Date(),
       }))

@@ -191,7 +191,7 @@ export class MissionAggregate extends AggregateRoot<string> {
       return this.transition(MissionStatus.VERIFYING, () => {});
     }
 
-    return Result.ok();
+    return Result.ok<void>(undefined as void);
   }
 
   pause(reason: string): Result<void, DomainError> {
@@ -296,6 +296,6 @@ export class MissionAggregate extends AggregateRoot<string> {
     this.props.status = to;
     this.props.version++;
     action();
-    return Result.ok();
+    return Result.ok<void>(undefined as void);
   }
 }

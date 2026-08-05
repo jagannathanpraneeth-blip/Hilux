@@ -15,6 +15,7 @@ export type Result<T, E = Error> = Ok<T, E> | Fail<T, E>;
 export class Ok<T, E> {
   readonly _tag = 'ok' as const;
   readonly value: T;
+  readonly error?: undefined;
 
   constructor(value: T) {
     this.value = value;
@@ -26,6 +27,14 @@ export class Ok<T, E> {
 
   isFailure(): this is Fail<T, E> {
     return false;
+  }
+
+  unwrap(): T {
+    return this.value;
+  }
+
+  unwrapError(): never {
+    throw new Error('Called unwrapError on an Ok result');
   }
 
   map<U>(fn: (value: T) => U): Result<U, E> {
@@ -44,6 +53,7 @@ export class Ok<T, E> {
 export class Fail<T, E> {
   readonly _tag = 'fail' as const;
   readonly error: E;
+  readonly value?: undefined;
 
   constructor(error: E) {
     this.error = error;
@@ -55,6 +65,14 @@ export class Fail<T, E> {
 
   isFailure(): this is Fail<T, E> {
     return true;
+  }
+
+  unwrap(): never {
+    throw this.error instanceof Error ? this.error : new Error(String(this.error));
+  }
+
+  unwrapError(): E {
+    return this.error;
   }
 
   map<U>(_fn: (value: T) => U): Result<U, E> {

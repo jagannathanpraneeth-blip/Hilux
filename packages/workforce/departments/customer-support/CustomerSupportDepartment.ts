@@ -113,9 +113,9 @@ class SupportWorker extends BaseWorker {
   private async resolveTicket(goal: WorkerGoal): Promise<{
     resolved: boolean;
     solution: string;
-    blockingIssue?: string;
-    suggestedPath?: string;
-    featureRequest?: string;
+    blockingIssue?: string | undefined;
+    suggestedPath?: string | undefined;
+    featureRequest?: string | undefined;
   }> {
     const context = await this.recallContext(goal.description);
     const hasSolution = context.applicableSkills.length > 0;

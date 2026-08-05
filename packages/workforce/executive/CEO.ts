@@ -35,7 +35,6 @@ export class CEO extends BaseWorker {
       department: 'executive',
       seniority: 'executive',
       hiredAt: new Date(),
-      managerId: undefined,   // Reports to no one internally
       directReports: directReportDepartments,
       specializations: [
         'strategic_planning',

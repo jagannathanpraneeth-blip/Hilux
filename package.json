@@ -2,6 +2,7 @@
   "name": "hilux",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "The Operating System for Autonomous AI Workforces",
   "workspaces": [
     "apps/*",

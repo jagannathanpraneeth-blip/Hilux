@@ -140,7 +140,7 @@ export class AgentStateMachineRuntime {
     return [...this.history];
   }
 
-  snapshot(): { state: AgentState; history: typeof this.history } {
+  snapshot(): { state: AgentState; history: Array<{ state: AgentState; event: AgentEvent['type']; timestamp: Date }> } {
     return { state: this.currentState, history: this.getHistory() };
   }
 }

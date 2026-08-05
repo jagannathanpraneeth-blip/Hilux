@@ -71,19 +71,19 @@ describe('Result<T,E> — Railway-Oriented Error Handling', () => {
 
     it('holds the correct value', () => {
       const result = Result.ok('hello');
-      expect(result.value).toBe('hello');
+      expect(result.unwrap()).toBe('hello');
     });
 
     it('maps over Ok value', () => {
       const result = Result.ok(10).map(x => x * 2);
       expect(result.isOk()).toBe(true);
-      expect(result.value).toBe(20);
+      expect(result.unwrap()).toBe(20);
     });
 
     it('flatMaps over Ok value', () => {
       const result = Result.ok(10).flatMap(x => Result.ok(x + 5));
       expect(result.isOk()).toBe(true);
-      expect(result.value).toBe(15);
+      expect(result.unwrap()).toBe(15);
     });
 
     it('getOrElse returns the value for Ok', () => {
@@ -98,7 +98,7 @@ describe('Result<T,E> — Railway-Oriented Error Handling', () => {
     it('creates Ok with complex object', () => {
       const obj = { id: '1', name: 'test', nested: { value: 42 } };
       const result = Result.ok(obj);
-      expect(result.value).toEqual(obj);
+      expect(result.unwrap()).toEqual(obj);
     });
   });
 
@@ -113,7 +113,7 @@ describe('Result<T,E> — Railway-Oriented Error Handling', () => {
     it('holds the error', () => {
       const err = new Error('test error');
       const result = Result.fail(err);
-      expect(result.error).toBe(err);
+      expect(result.unwrapError()).toBe(err);
     });
 
     it('map on Fail propagates the error (no side effect)', () => {
@@ -144,8 +144,8 @@ describe('Result<T,E> — Railway-Oriented Error Handling', () => {
           super(message);
         }
       }
-      const result = Result.fail(new DomainError('INVALID_GOAL', 'Goal is too short'));
-      expect(result.error.code).toBe('INVALID_GOAL');
+      const result = Result.fail<never, DomainError>(new DomainError('INVALID_GOAL', 'Goal is too short'));
+      expect(result.unwrapError().code).toBe('INVALID_GOAL');
     });
   });
 
@@ -154,7 +154,7 @@ describe('Result<T,E> — Railway-Oriented Error Handling', () => {
       const results = [Result.ok(1), Result.ok(2), Result.ok(3)];
       const combined = Result.all(results);
       expect(combined.isOk()).toBe(true);
-      expect(combined.value).toEqual([1, 2, 3]);
+      expect(combined.unwrap()).toEqual([1, 2, 3]);
     });
 
     it('returns Fail on first failure', () => {
@@ -162,13 +162,13 @@ describe('Result<T,E> — Railway-Oriented Error Handling', () => {
       const results = [Result.ok(1), Result.fail<number>(err), Result.ok(3)];
       const combined = Result.all(results);
       expect(combined.isFailure()).toBe(true);
-      expect(combined.error).toBe(err);
+      expect(combined.unwrapError()).toBe(err);
     });
 
     it('returns Ok for empty array', () => {
       const combined = Result.all<number, Error>([]);
       expect(combined.isOk()).toBe(true);
-      expect(combined.value).toEqual([]);
+      expect(combined.unwrap()).toEqual([]);
     });
 
     it('chaining: pipeline of operations', () => {
@@ -182,7 +182,7 @@ describe('Result<T,E> — Railway-Oriented Error Handling', () => {
       // Valid pipeline
       const valid = parseAge('25').flatMap(validateAge);
       expect(valid.isOk()).toBe(true);
-      expect(valid.value).toBe(25);
+      expect(valid.unwrap()).toBe(25);
 
       // Invalid input
       const invalid = parseAge('abc').flatMap(validateAge);
@@ -191,7 +191,7 @@ describe('Result<T,E> — Railway-Oriented Error Handling', () => {
       // Out of range
       const outOfRange = parseAge('200').flatMap(validateAge);
       expect(outOfRange.isFailure()).toBe(true);
-      expect(outOfRange.error.message).toBe('Age out of range');
+      expect(outOfRange.unwrapError().message).toBe('Age out of range');
     });
   });
 });
@@ -260,8 +260,8 @@ describe('ValueObject — Value-Based Equality & Immutability', () => {
   it('props are frozen (immutable)', () => {
     const money = new Money(100, 'USD');
     expect(() => {
-      // @ts-expect-error intentional mutation attempt
-      (money as any).props.amount = 999;
+      // @ts-ignore intentional mutation attempt
+      (money.props as any).amount = 999;
     }).toThrow();
   });
 
@@ -298,7 +298,7 @@ describe('DomainEvent — Event Sourcing Base', () => {
     expect(json).toHaveProperty('eventType', 'order.created');
     expect(json).toHaveProperty('aggregateId', 'order-123');
     expect(json).toHaveProperty('payload');
-    expect((json.payload as any).amount).toBe(500);
+    expect((json['payload'] as any).amount).toBe(500);
   });
 
   it('supports optional correlationId', () => {

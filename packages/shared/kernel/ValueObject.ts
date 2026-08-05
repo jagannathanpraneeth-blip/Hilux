@@ -7,7 +7,7 @@
  *
  * Examples: Money, Email, Goal, MissionBudget, AcceptanceCriteria
  */
-export abstract class ValueObject<TProps extends Record<string, unknown>> {
+export abstract class ValueObject<TProps extends object> {
   protected readonly props: Readonly<TProps>;
 
   protected constructor(props: TProps) {

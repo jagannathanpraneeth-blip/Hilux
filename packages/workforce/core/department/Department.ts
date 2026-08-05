@@ -218,8 +218,10 @@ export abstract class Department extends EventEmitter {
     const currentIndex = seniorityLadder.indexOf(worker.profile.seniority);
     if (currentIndex >= seniorityLadder.length - 1) return;
 
-    (worker.profile as { seniority: WorkerProfile['seniority'] }).seniority =
-      seniorityLadder[currentIndex + 1];
+    const nextSeniority = seniorityLadder[currentIndex + 1];
+    if (!nextSeniority) return;
+
+    (worker.profile as { seniority: WorkerProfile['seniority'] }).seniority = nextSeniority;
 
     await worker.upgradeAutonomy();
 
@@ -430,9 +432,10 @@ export abstract class Department extends EventEmitter {
       budgetUtilization: this.config.budget.used / this.config.budget.monthly,
       kpiStatus: this.config.kpis,
       escalationsPending: [...this.workers.values()].reduce(
-        (sum, w) => sum + w['pendingEscalations']?.filter(
-          (e: { resolvedAt?: Date }) => !e.resolvedAt
-        ).length ?? 0, 0
+        (sum, w) => {
+          const escList = (w as any).pendingEscalations as Array<{ resolvedAt?: Date }> | undefined;
+          return sum + (escList ? escList.filter(e => !e.resolvedAt).length : 0);
+        }, 0
       ),
       knowledgeItemsAdded: 0, // Computed from knowledge base
     };

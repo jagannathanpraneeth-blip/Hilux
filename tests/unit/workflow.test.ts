@@ -29,7 +29,7 @@ function makeNode(taskId: string, phaseId = 'p1') {
 function makeDAG(
   nodeIds: string[],
   edges: Array<[string, string]>,
-  phases: Array<{ phaseId: string; taskIds: string[] }> = [{ phaseId: 'p1', name: 'p1', taskIds: nodeIds }]
+  phases: Array<{ phaseId: string; taskIds: string[] }> = [{ phaseId: 'p1', taskIds: nodeIds }]
 ): MissionDAG {
   return {
     nodes: nodeIds.map(id => makeNode(id)),

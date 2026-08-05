@@ -27,19 +27,19 @@ describe('Goal — Value Object', () => {
     it('creates a valid goal with sufficient text', () => {
       const result = Goal.create('Analyze our top competitors and produce a strategic response plan');
       expect(result.isOk()).toBe(true);
-      expect(result.value.text).toBe('Analyze our top competitors and produce a strategic response plan');
+      expect(result.unwrap().text).toBe('Analyze our top competitors and produce a strategic response plan');
     });
 
     it('trims whitespace from goal text', () => {
       const result = Goal.create('  Build the product roadmap for Q4  ');
       expect(result.isOk()).toBe(true);
-      expect(result.value.text).toBe('Build the product roadmap for Q4');
+      expect(result.unwrap().text).toBe('Build the product roadmap for Q4');
     });
 
     it('fails when goal is too short (under 10 chars)', () => {
       const result = Goal.create('Short');
       expect(result.isFailure()).toBe(true);
-      expect(result.error.message).toContain('at least 10 characters');
+      expect(result.unwrapError().message).toContain('at least 10 characters');
     });
 
     it('fails for empty string', () => {
@@ -56,7 +56,7 @@ describe('Goal — Value Object', () => {
       const longText = 'a'.repeat(4001);
       const result = Goal.create(longText);
       expect(result.isFailure()).toBe(true);
-      expect(result.error.message).toContain('maximum length');
+      expect(result.unwrapError().message).toContain('maximum length');
     });
 
     it('accepts exactly 4000 character goal', () => {
@@ -73,19 +73,19 @@ describe('Goal — Value Object', () => {
 
   describe('Goal — immutability and equality', () => {
     it('two goals with same text are equal', () => {
-      const a = Goal.create('Build the product roadmap for Q4').value;
-      const b = Goal.create('Build the product roadmap for Q4').value;
+      const a = Goal.create('Build the product roadmap for Q4').unwrap();
+      const b = Goal.create('Build the product roadmap for Q4').unwrap();
       expect(a.equals(b)).toBe(true);
     });
 
     it('two goals with different text are not equal', () => {
-      const a = Goal.create('Build the product roadmap for Q4').value;
-      const b = Goal.create('Build the product roadmap for Q3').value;
+      const a = Goal.create('Build the product roadmap for Q4').unwrap();
+      const b = Goal.create('Build the product roadmap for Q3').unwrap();
       expect(a.equals(b)).toBe(false);
     });
 
     it('withEmbedding creates a new Goal with vector', () => {
-      const goal = Goal.create('Build the product roadmap for Q4').value;
+      const goal = Goal.create('Build the product roadmap for Q4').unwrap();
       const vector = [0.1, 0.2, 0.3, 0.4];
       const embedded = goal.withEmbedding(vector);
       expect(embedded.embeddingVector).toEqual(vector);
@@ -94,7 +94,7 @@ describe('Goal — Value Object', () => {
 
     it('toString returns text', () => {
       const text = 'Build the product roadmap for Q4';
-      const goal = Goal.create(text).value;
+      const goal = Goal.create(text).unwrap();
       expect(goal.toString()).toBe(text);
     });
   });
@@ -109,8 +109,8 @@ describe('MissionBudget — Value Object', () => {
     it('creates a valid budget', () => {
       const result = MissionBudget.create(100, 24);
       expect(result.isOk()).toBe(true);
-      expect(result.value.maxCostUsd).toBe(100);
-      expect(result.value.maxDurationHours).toBe(24);
+      expect(result.unwrap().maxCostUsd).toBe(100);
+      expect(result.unwrap().maxDurationHours).toBe(24);
     });
 
     it('fails when cost is negative', () => {
@@ -136,22 +136,22 @@ describe('MissionBudget — Value Object', () => {
 
   describe('MissionBudget.isExceeded()', () => {
     it('returns false when within budget', () => {
-      const budget = MissionBudget.create(100, 24).value;
+      const budget = MissionBudget.create(100, 24).unwrap();
       expect(budget.isExceeded(50, 10)).toBe(false);
     });
 
     it('returns true when cost exceeds budget', () => {
-      const budget = MissionBudget.create(100, 24).value;
+      const budget = MissionBudget.create(100, 24).unwrap();
       expect(budget.isExceeded(101, 10)).toBe(true);
     });
 
     it('returns true when duration exceeds limit', () => {
-      const budget = MissionBudget.create(100, 24).value;
+      const budget = MissionBudget.create(100, 24).unwrap();
       expect(budget.isExceeded(50, 25)).toBe(true);
     });
 
     it('returns false at exact budget boundary', () => {
-      const budget = MissionBudget.create(100, 24).value;
+      const budget = MissionBudget.create(100, 24).unwrap();
       expect(budget.isExceeded(100, 24)).toBe(false);
     });
   });
@@ -264,7 +264,7 @@ describe('MissionAggregate — Full Lifecycle', () => {
     it('assigns a UUID as id', () => {
       const mission = MissionAggregate.create({
         orgId: validOrgId, goalText: validGoalText, maxCostUsd: 100, maxDurationHours: 24,
-      }).value;
+      }).unwrap();
       expect(mission.id).toMatch(
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
       );
@@ -273,21 +273,21 @@ describe('MissionAggregate — Full Lifecycle', () => {
     it('starts in PENDING status', () => {
       const mission = MissionAggregate.create({
         orgId: validOrgId, goalText: validGoalText, maxCostUsd: 100, maxDurationHours: 24,
-      }).value;
+      }).unwrap();
       expect(mission.status).toBe(MissionStatus.PENDING);
     });
 
     it('starts at version 0', () => {
       const mission = MissionAggregate.create({
         orgId: validOrgId, goalText: validGoalText, maxCostUsd: 100, maxDurationHours: 24,
-      }).value;
+      }).unwrap();
       expect(mission.version).toBe(0);
     });
 
     it('emits MissionCreated domain event', () => {
       const mission = MissionAggregate.create({
         orgId: validOrgId, goalText: validGoalText, maxCostUsd: 100, maxDurationHours: 24,
-      }).value;
+      }).unwrap();
       expect(mission.domainEventCount).toBe(1);
       const events = mission.peekDomainEvents();
       expect(events[0]?.eventType).toBe('hilux.core.mission.created');
@@ -314,7 +314,7 @@ describe('MissionAggregate — Full Lifecycle', () => {
         correlationId: 'req-xyz-123',
       });
       expect(result.isOk()).toBe(true);
-      const event = result.value.peekDomainEvents()[0];
+      const event = result.unwrap().peekDomainEvents()[0];
       expect(event?.correlationId).toBe('req-xyz-123');
     });
   });
@@ -322,7 +322,7 @@ describe('MissionAggregate — Full Lifecycle', () => {
   // ── State Transitions ─────────────────────────────────────────────────────
 
   describe('Mission lifecycle — happy path', () => {
-    let mission: MissionAggregate;
+    let mission!: MissionAggregate;
     const sampleDAG: MissionDAG = {
       nodes: [
         { taskId: 't1', title: 'Research', description: 'Research competitors', requiredCapabilities: ['research'], estimatedTokens: 5000, phaseId: 'p1' },
@@ -344,7 +344,7 @@ describe('MissionAggregate — Full Lifecycle', () => {
       mission = MissionAggregate.create({
         orgId: validOrgId, goalText: validGoalText,
         maxCostUsd: 100, maxDurationHours: 24,
-      }).value;
+      }).unwrap();
       mission.pullDomainEvents(); // Clear creation events
     });
 
@@ -426,13 +426,13 @@ describe('MissionAggregate — Full Lifecycle', () => {
   // ── Failure Paths ─────────────────────────────────────────────────────────
 
   describe('Mission lifecycle — failure paths', () => {
-    let mission: MissionAggregate;
+    let mission!: MissionAggregate;
 
     beforeEach(() => {
       mission = MissionAggregate.create({
         orgId: validOrgId, goalText: validGoalText,
         maxCostUsd: 100, maxDurationHours: 24,
-      }).value;
+      }).unwrap();
       mission.pullDomainEvents();
     });
 
@@ -493,13 +493,13 @@ describe('MissionAggregate — Full Lifecycle', () => {
   // ── Human Gate ────────────────────────────────────────────────────────────
 
   describe('Human Gate', () => {
-    let mission: MissionAggregate;
+    let mission!: MissionAggregate;
 
     beforeEach(() => {
       mission = MissionAggregate.create({
         orgId: validOrgId, goalText: validGoalText,
         maxCostUsd: 100, maxDurationHours: 24,
-      }).value;
+      }).unwrap();
       mission.startPlanning();
       mission.attachDAG({
         nodes: [{ taskId: 't1', title: 'T', description: 'D', requiredCapabilities: [], estimatedTokens: 100, phaseId: 'p1' }],
@@ -546,7 +546,7 @@ describe('MissionAggregate — Full Lifecycle', () => {
       const mission = MissionAggregate.create({
         orgId: validOrgId, goalText: validGoalText,
         maxCostUsd: 100, maxDurationHours: 24,
-      }).value;
+      }).unwrap();
 
       expect(mission.version).toBe(0);
       mission.startPlanning();
@@ -563,7 +563,7 @@ describe('MissionAggregate — Full Lifecycle', () => {
       const mission = MissionAggregate.create({
         orgId: validOrgId, goalText: validGoalText,
         maxCostUsd: 100, maxDurationHours: 24,
-      }).value;
+      }).unwrap();
       mission.startPlanning();
       const events = mission.pullDomainEvents();
       for (const event of events) {
@@ -575,10 +575,10 @@ describe('MissionAggregate — Full Lifecycle', () => {
       const mission = MissionAggregate.create({
         orgId: validOrgId, goalText: validGoalText,
         maxCostUsd: 100, maxDurationHours: 24,
-      }).value;
+      }).unwrap();
       mission.startPlanning();
       const events = mission.pullDomainEvents();
-      const ids = events.map(e => e.eventId);
+      const ids = events.map((e: { eventId: string }) => e.eventId);
       const uniqueIds = new Set(ids);
       expect(uniqueIds.size).toBe(ids.length);
     });
