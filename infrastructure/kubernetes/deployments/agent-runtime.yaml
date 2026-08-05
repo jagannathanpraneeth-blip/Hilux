@@ -1,0 +1,225 @@
+###############################################################
+# Hilux Agent Runtime — Kubernetes Deployment
+#
+# WHY HPA on CPU + custom metric:
+#   CPU tells us when existing pods are overloaded.
+#   agent_queue_depth tells us when we need MORE pods.
+#   Both signals together give accurate scaling decisions.
+#
+# WHY warm pool (minReplicas: 10):
+#   Cold-starting a pod = 15-30s for container pull + init.
+#   Missions would stall waiting for agents.
+#   Warm pool ensures zero-latency agent spawning.
+###############################################################
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-runtime
+  namespace: hilux-agents
+  labels:
+    app: agent-runtime
+    component: execution
+    version: "1.0.0"
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: agent-runtime
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0  # Zero-downtime required for running agents
+  template:
+    metadata:
+      labels:
+        app: agent-runtime
+        component: execution
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: "/metrics"
+    spec:
+      serviceAccountName: agent-runtime-sa
+
+      # Spread across AZs for fault tolerance
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: agent-runtime
+
+      containers:
+        - name: agent-runtime
+          image: ghcr.io/hilux/agent-runtime:1.0.0
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 3000  # gRPC
+              name: grpc
+            - containerPort: 9090  # Prometheus metrics
+              name: metrics
+
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: KAFKA_BROKERS
+              valueFrom:
+                secretKeyRef:
+                  name: hilux-kafka-secret
+                  key: brokers
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: hilux-db-secret
+                  key: url
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: hilux-redis-secret
+                  key: url
+            - name: QDRANT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: hilux-qdrant-secret
+                  key: url
+            - name: AUDIT_SERVICE_URL
+              value: "http://audit-service.hilux-audit.svc.cluster.local:3000"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "2000m"
+              memory: "4Gi"    # Agents carry large context windows
+
+          readinessProbe:
+            grpc:
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            grpc:
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            failureThreshold: 3
+
+          # Graceful shutdown: finish current agent task before termination
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 30"]  # Allow in-flight tasks to complete
+
+      terminationGracePeriodSeconds: 120  # 2min for long-running tasks
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: agent-runtime-hpa
+  namespace: hilux-agents
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: agent-runtime
+  minReplicas: 10
+  maxReplicas: 500
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+    - type: External
+      external:
+        metric:
+          name: hilux_agent_queue_depth
+          selector:
+            matchLabels:
+              namespace: hilux-agents
+        target:
+          type: AverageValue
+          averageValue: "50"  # Scale when >50 tasks queued per pod
+  behavior:
+    scaleUp:
+      stabilizationWindowSeconds: 30    # Fast scale-up
+      policies:
+        - type: Pods
+          value: 20
+          periodSeconds: 30
+    scaleDown:
+      stabilizationWindowSeconds: 300   # Conservative scale-down (agents mid-task)
+      policies:
+        - type: Pods
+          value: 5
+          periodSeconds: 60
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: agent-runtime-pdb
+  namespace: hilux-agents
+spec:
+  minAvailable: 8  # Always keep at least 8 agent pods available
+  selector:
+    matchLabels:
+      app: agent-runtime
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: agent-runtime-network-policy
+  namespace: hilux-agents
+spec:
+  podSelector:
+    matchLabels:
+      app: agent-runtime
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: hilux-core       # Only from workflow engine, orchestrator
+    ports:
+      - protocol: TCP
+        port: 3000
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: hilux-audit      # Audit fabric
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: hilux-data       # Databases
+    - to:                             # External tool APIs
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - 10.0.0.0/8           # Block internal network access from tools
+              - 172.16.0.0/12
+              - 192.168.0.0/16
+      ports:
+        - protocol: TCP
+          port: 443

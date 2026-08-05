@@ -1,0 +1,33 @@
+{
+  "name": "hilux",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Operating System for Autonomous AI Workforces",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "sdk/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "check-boundaries": "node tooling/boundary-checker/index.js",
+    "db:migrate": "turbo run db:migrate",
+    "db:generate": "turbo run db:generate"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.4.0",
+    "@types/node": "^20.0.0",
+    "prettier": "^3.2.0",
+    "eslint": "^8.57.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}
