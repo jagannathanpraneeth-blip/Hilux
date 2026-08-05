@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hilux — The Operating System for Autonomous AI Workforces</title>
+  <!-- Google Fonts: Outfit, Inter, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Ambient Mesh Background -->
+  <div class="ambient-mesh"></div>
+
+  <div class="app-container">
+
+    <!-- ── TOP APPLE spatial HEADER ────────────────────────────────────────── -->
+    <header class="top-header glass-panel">
+      <div class="header-left">
+        <div class="logo-mark">
+          <div class="logo-node"></div>
+          <span class="logo-text">HILUX <span class="logo-badge">OS v2.0</span></span>
+        </div>
+        <div class="divider-vertical"></div>
+        <div class="active-mission-pill">
+          <span class="pulse-dot active"></span>
+          <span class="mission-label">MISSION:</span>
+          <span class="mission-name">Launch Enterprise Autonomous Workforce v2.0</span>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div class="command-search" id="commandBarBtn">
+          <span class="search-icon">⌘</span>
+          <span class="search-placeholder">Search workers, tasks, memories, directives...</span>
+          <span class="shortcut-badge">Ctrl + K</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="metric-pill">
+          <span class="metric-icon">🔥</span>
+          <span class="metric-val">$14.20</span>
+          <span class="metric-sub">/ $100.00</span>
+        </div>
+        <div class="metric-pill glow-cyan">
+          <span class="metric-icon">⚡</span>
+          <span class="metric-val">142 t/s</span>
+        </div>
+        <div class="metric-pill glow-emerald">
+          <span class="metric-icon">🟢</span>
+          <span class="metric-val">99.4%</span>
+          <span class="metric-sub">Health</span>
+        </div>
+        <div class="avatar-group">
+          <div class="user-avatar" title="Founder / CTO">H</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── MAIN SPATIAL BODY ────────────────────────────────────────────────── -->
+    <div class="main-layout">
+
+      <!-- ARC SIDEBAR (Navigation) -->
+      <aside class="arc-sidebar glass-panel">
+        <div class="sidebar-section">
+          <div class="section-title">COMMAND</div>
+          <button class="nav-item active" data-view="mission-control">
+            <span class="nav-icon">🚀</span>
+            <span class="nav-label">Mission Control</span>
+            <span class="nav-badge">LIVE</span>
+          </button>
+          <button class="nav-item" data-view="agent-graph">
+            <span class="nav-icon">🌐</span>
+            <span class="nav-label">Live Agent Graph</span>
+            <span class="nav-badge count">22</span>
+          </button>
+          <button class="nav-item" data-view="task-dag">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Task Graph (DAG)</span>
+          </button>
+          <button class="nav-item" data-view="reasoning-stream">
+            <span class="nav-icon">🧠</span>
+            <span class="nav-label">AI Thinking Stream</span>
+            <span class="nav-badge glow">ACTIVE</span>
+          </button>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="section-title">INTELLIGENCE</div>
+          <button class="nav-item" data-view="memory-graph">
+            <span class="nav-icon">💾</span>
+            <span class="nav-label">Memory & Knowledge</span>
+          </button>
+          <button class="nav-item" data-view="gpu-metrics">
+            <span class="nav-icon">⚡</span>
+            <span class="nav-label">GPU & Hardware</span>
+          </button>
+          <button class="nav-item" data-view="virtual-desktop">
+            <span class="nav-icon">💻</span>
+            <span class="nav-label">Virtual Desktop</span>
+          </button>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="section-title">SYSTEM</div>
+          <button class="nav-item" data-view="terminal-logs">
+            <span class="nav-icon">🖥️</span>
+            <span class="nav-label">Terminal & Logs</span>
+          </button>
+          <button class="nav-item" data-view="human-gates">
+            <span class="nav-icon">🚨</span>
+            <span class="nav-label">Escalations</span>
+            <span class="nav-badge warning">1</span>
+          </button>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="org-card glass-card">
+            <div class="org-name">Hilux AI Corp</div>
+            <div class="org-sub">9 Departments · 22 Workers</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 78%;"></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CENTRAL WORKSPACE CANVAS -->
+      <main class="workspace-canvas" id="workspaceCanvas">
+
+        <!-- VIEW 1: MISSION CONTROL -->
+        <section class="view-panel active" id="view-mission-control">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Mission Control Center</h1>
+              <p class="view-subtitle">Autonomous Workforce Operations & Executive Command</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn btn-primary" id="newGoalBtn">+ Set Executive Goal</button>
+              <button class="btn btn-secondary" id="execReviewBtn">Run Executive Review</button>
+            </div>
+          </div>
+
+          <!-- KPI STATS GRID -->
+          <div class="kpi-grid">
+            <div class="kpi-card glass-card hover-lift glow-cyan">
+              <div class="kpi-label">Active Workforces</div>
+              <div class="kpi-value">9 <span class="kpi-unit">Depts</span></div>
+              <div class="kpi-sub"><span class="trend-up">↑ 22</span> Autonomous Workers Spawned</div>
+            </div>
+            <div class="kpi-card glass-card hover-lift glow-violet">
+              <div class="kpi-label">Sprint Velocity</div>
+              <div class="kpi-value">84 <span class="kpi-unit">pts/hr</span></div>
+              <div class="kpi-sub"><span class="trend-up">↑ 14%</span> vs previous cycle</div>
+            </div>
+            <div class="kpi-card glass-card hover-lift glow-emerald">
+              <div class="kpi-label">Autonomy Rate</div>
+              <div class="kpi-value">94.2%</div>
+              <div class="kpi-sub">0 Human Escalations Required</div>
+            </div>
+            <div class="kpi-card glass-card hover-lift glow-amber">
+              <div class="kpi-label">Verification Pass Rate</div>
+              <div class="kpi-value">98.6%</div>
+              <div class="kpi-sub">Auto-corrected 3 edge cases</div>
+            </div>
+          </div>
+
+          <!-- EXECUTIVE BOARD OVERVIEW -->
+          <div class="grid-2-1">
+            <div class="panel glass-card">
+              <div class="panel-header">
+                <h3>Executive Hierarchy & Directives</h3>
+                <span class="badge badge-cyan">Chain of Command</span>
+              </div>
+              <div class="exec-list">
+                <div class="exec-card">
+                  <div class="exec-avatar ceo">CEO</div>
+                  <div class="exec-info">
+                    <div class="exec-name">Chief Executive Officer</div>
+                    <div class="exec-status">Decomposing: "Launch Enterprise Autonomous Workforce v2.0"</div>
+                    <div class="exec-tags">
+                      <span class="tag">Strategic Planning</span>
+                      <span class="tag">Goal Decomposition</span>
+                      <span class="tag">Autonomy: Executive</span>
+                    </div>
+                  </div>
+                  <div class="exec-metrics">
+                    <span class="metric">Score: 96%</span>
+                  </div>
+                </div>
+
+                <div class="exec-card">
+                  <div class="exec-avatar cto">CTO</div>
+                  <div class="exec-info">
+                    <div class="exec-name">Chief Technology Officer</div>
+                    <div class="exec-status">Governing: Engineering, DevOps, Security, QA, Research</div>
+                    <div class="exec-tags">
+                      <span class="tag">Architecture</span>
+                      <span class="tag">6 Sub-depts</span>
+                      <span class="tag">Velocity: 92 pts</span>
+                    </div>
+                  </div>
+                  <div class="exec-metrics">
+                    <span class="metric">Score: 94%</span>
+                  </div>
+                </div>
+
+                <div class="exec-card">
+                  <div class="exec-avatar cpo">CPO</div>
+                  <div class="exec-info">
+                    <div class="exec-name">Chief Product Officer</div>
+                    <div class="exec-status">PRD Generation & Roadmap Prioritization</div>
+                    <div class="exec-tags">
+                      <span class="tag">PRD Engine</span>
+                      <span class="tag">User Feedback</span>
+                    </div>
+                  </div>
+                  <div class="exec-metrics">
+                    <span class="metric">Score: 91%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- LIVE DEPARTMENT HEALTH -->
+            <div class="panel glass-card">
+              <div class="panel-header">
+                <h3>Departments Status</h3>
+                <span class="badge badge-emerald">All Nominal</span>
+              </div>
+              <div class="dept-health-list">
+                <div class="dept-row">
+                  <span class="dept-dot active"></span>
+                  <span class="dept-name">Engineering</span>
+                  <span class="dept-count">7 Workers</span>
+                  <div class="mini-bar"><div class="fill" style="width: 92%;"></div></div>
+                </div>
+                <div class="dept-row">
+                  <span class="dept-dot active"></span>
+                  <span class="dept-name">Research</span>
+                  <span class="dept-count">2 Workers</span>
+                  <div class="mini-bar"><div class="fill" style="width: 85%;"></div></div>
+                </div>
+                <div class="dept-row">
+                  <span class="dept-dot active"></span>
+                  <span class="dept-name">Marketing</span>
+                  <span class="dept-count">2 Workers</span>
+                  <div class="mini-bar"><div class="fill" style="width: 88%;"></div></div>
+                </div>
+                <div class="dept-row">
+                  <span class="dept-dot active"></span>
+                  <span class="dept-name">Finance</span>
+                  <span class="dept-count">2 Workers</span>
+                  <div class="mini-bar"><div class="fill" style="width: 95%;"></div></div>
+                </div>
+                <div class="dept-row">
+                  <span class="dept-dot active"></span>
+                  <span class="dept-name">Legal</span>
+                  <span class="dept-count">1 Worker</span>
+                  <div class="mini-bar"><div class="fill" style="width: 90%;"></div></div>
+                </div>
+                <div class="dept-row">
+                  <span class="dept-dot active"></span>
+                  <span class="dept-name">Customer Support</span>
+                  <span class="dept-count">3 Workers</span>
+                  <div class="mini-bar"><div class="fill" style="width: 94%;"></div></div>
+                </div>
+                <div class="dept-row">
+                  <span class="dept-dot active"></span>
+                  <span class="dept-name">Analytics</span>
+                  <span class="dept-count">2 Workers</span>
+                  <div class="mini-bar"><div class="fill" style="width: 89%;"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 2: LIVE AGENT GRAPH CANVAS -->
+        <section class="view-panel" id="view-agent-graph">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Live Agent Network Canvas</h1>
+              <p class="view-subtitle">Real-time force graph of worker nodes, message buses, and cognitive states</p>
+            </div>
+            <div class="canvas-controls">
+              <button class="btn btn-icon" id="resetZoomBtn" title="Reset View">🔍</button>
+              <button class="btn btn-icon" id="togglePhysicsBtn" title="Pause Physics">⏸️</button>
+            </div>
+          </div>
+
+          <div class="graph-canvas-container glass-card">
+            <canvas id="agentGraphCanvas"></canvas>
+            <div class="canvas-overlay-legend">
+              <div class="legend-item"><span class="dot cyan"></span> Executing</div>
+              <div class="legend-item"><span class="dot violet"></span> Reflecting / Learning</div>
+              <div class="legend-item"><span class="dot emerald"></span> Idle / Ready</div>
+              <div class="legend-item"><span class="dot amber"></span> Escalating</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 3: TASK GRAPH (DAG) -->
+        <section class="view-panel" id="view-task-dag">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Topological Execution DAG</h1>
+              <p class="view-subtitle">Dependency graph compiled by Kahn's Topological Sorter</p>
+            </div>
+            <div class="view-actions">
+              <span class="badge badge-cyan">Critical Path Identified</span>
+            </div>
+          </div>
+
+          <div class="dag-container glass-card">
+            <div class="dag-layers">
+              <!-- LAYER 0 -->
+              <div class="dag-layer">
+                <div class="layer-header">LAYER 0 (Parallel Execution)</div>
+                <div class="dag-node critical">
+                  <div class="node-badge">t1</div>
+                  <div class="node-title">Product Strategy & PRD</div>
+                  <div class="node-dept">Product Manager</div>
+                  <div class="node-meta">Est: 5,000 tokens · Cap: product</div>
+                  <div class="node-status status-complete">✓ Completed</div>
+                </div>
+                <div class="dag-node">
+                  <div class="node-badge">t2</div>
+                  <div class="node-title">Market Analysis</div>
+                  <div class="node-dept">Research Department</div>
+                  <div class="node-meta">Est: 3,000 tokens · Cap: research</div>
+                  <div class="node-status status-complete">✓ Completed</div>
+                </div>
+              </div>
+
+              <div class="dag-arrow">→</div>
+
+              <!-- LAYER 1 -->
+              <div class="dag-layer">
+                <div class="layer-header">LAYER 1 (Parallel Development)</div>
+                <div class="dag-node critical glowing">
+                  <div class="node-badge">t3</div>
+                  <div class="node-title">API Endpoint Design</div>
+                  <div class="node-dept">Backend Engineer</div>
+                  <div class="node-meta">Est: 8,000 tokens · Cap: nodejs</div>
+                  <div class="node-status status-active">⚡ Executing...</div>
+                </div>
+                <div class="dag-node">
+                  <div class="node-badge">t4</div>
+                  <div class="node-title">Frontend UI Components</div>
+                  <div class="node-dept">Frontend Engineer</div>
+                  <div class="node-meta">Est: 6,000 tokens · Cap: react</div>
+                  <div class="node-status status-active">⚡ Executing...</div>
+                </div>
+                <div class="dag-node">
+                  <div class="node-badge">t5</div>
+                  <div class="node-title">PostgreSQL Schema Migration</div>
+                  <div class="node-dept">Database Engineer</div>
+                  <div class="node-meta">Est: 4,000 tokens · Cap: sql</div>
+                  <div class="node-status status-active">⚡ Executing...</div>
+                </div>
+              </div>
+
+              <div class="dag-arrow">→</div>
+
+              <!-- LAYER 2 -->
+              <div class="dag-layer">
+                <div class="layer-header">LAYER 2 (Verification & Deploy)</div>
+                <div class="dag-node critical">
+                  <div class="node-badge">t6</div>
+                  <div class="node-title">Security & Penetration Audit</div>
+                  <div class="node-dept">Security Engineer</div>
+                  <div class="node-meta">Est: 5,000 tokens · Cap: appsec</div>
+                  <div class="node-status status-pending">⌛ Pending</div>
+                </div>
+                <div class="dag-node">
+                  <div class="node-badge">t7</div>
+                  <div class="node-title">Kubernetes Helm Deployment</div>
+                  <div class="node-dept">DevOps Engineer</div>
+                  <div class="node-meta">Est: 4,000 tokens · Cap: k8s</div>
+                  <div class="node-status status-pending">⌛ Pending</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 4: REASONING STREAM -->
+        <section class="view-panel" id="view-reasoning-stream">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Neural Thinking & Reasoning Stream</h1>
+              <p class="view-subtitle">Live cognitive reflection loops, confidence calibration, and self-corrections</p>
+            </div>
+          </div>
+
+          <div class="reasoning-container glass-card">
+            <div class="thought-stream-header">
+              <span class="pulse-dot active"></span>
+              <span>LIVE REASONING PIPELINE — WORKER: [exec-cto-001]</span>
+            </div>
+            <div class="thought-stream" id="thoughtStream">
+              <!-- Dynamically populated by JS stream -->
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 5: MEMORY & KNOWLEDGE GRAPH -->
+        <section class="view-panel" id="view-memory-graph">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Institutional Memory Base</h1>
+              <p class="view-subtitle">4-Tier Cognitive Store: Working, Episodic, Semantic, Procedural</p>
+            </div>
+          </div>
+
+          <div class="memory-grid">
+            <div class="memory-card glass-card glow-cyan">
+              <div class="card-title">Tier 1 — Working Context</div>
+              <div class="memory-item">Active Mission: "Launch Enterprise v2.0"</div>
+              <div class="memory-item">Current Goal ID: g-front-9812</div>
+              <div class="memory-item">Loaded Dependencies: 14 Modules</div>
+            </div>
+            <div class="memory-card glass-card glow-violet">
+              <div class="card-title">Tier 2 — Episodic Memory</div>
+              <div class="memory-item">Task Outcome #89: API endpoints generated (Success)</div>
+              <div class="memory-item">Task Outcome #90: DB migration executed (Success)</div>
+              <div class="memory-item">Task Outcome #91: Reflected on caching strategy</div>
+            </div>
+            <div class="memory-card glass-card glow-emerald">
+              <div class="card-title">Tier 3 — Semantic Knowledge</div>
+              <div class="memory-item">Fact: "TypeScript strict mode catches compile errors"</div>
+              <div class="memory-item">Fact: "Rate limiting is required on public endpoints"</div>
+              <div class="memory-item">Fact: "Always enforce exact budget limits"</div>
+            </div>
+            <div class="memory-card glass-card glow-amber">
+              <div class="card-title">Tier 4 — Procedural Playbooks</div>
+              <div class="memory-item">Procedure: "How to handle 422 API errors"</div>
+              <div class="memory-item">Procedure: "Self-correction protocol after failed verification"</div>
+              <div class="memory-item">Procedure: "Graceful knowledge handoff on worker termination"</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 6: GPU & HARDWARE METRICS -->
+        <section class="view-panel" id="view-gpu-metrics">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">GPU & Infrastructure Telemetry</h1>
+              <p class="view-subtitle">Real-time hardware utilization, tensor throughput, and VRAM pressure</p>
+            </div>
+          </div>
+
+          <div class="hardware-grid">
+            <div class="hardware-card glass-card">
+              <h3>NVIDIA H100 Tensor Core</h3>
+              <div class="gauge-container">
+                <canvas id="gpuGaugeCanvas" width="200" height="200"></canvas>
+                <div class="gauge-value">88%</div>
+                <div class="gauge-label">GPU Utilization</div>
+              </div>
+            </div>
+
+            <div class="hardware-card glass-card">
+              <h3>VRAM Allocation</h3>
+              <div class="stat-big">14.2 <span class="unit">/ 24.0 GB</span></div>
+              <div class="progress-bar lg"><div class="progress-fill cyan" style="width: 59%;"></div></div>
+              <div class="hardware-meta">
+                <span>Model Weights: 8.4 GB</span>
+                <span>KV Cache: 5.8 GB</span>
+              </div>
+            </div>
+
+            <div class="hardware-card glass-card">
+              <h3>Token Throughput</h3>
+              <div class="stat-big">142.8 <span class="unit">tokens/sec</span></div>
+              <div class="sparkline-container">
+                <canvas id="sparklineCanvas" width="250" height="60"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 7: VIRTUAL DESKTOP -->
+        <section class="view-panel" id="view-virtual-desktop">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Multi-Agent Virtual Desktop</h1>
+              <p class="view-subtitle">Live execution windows for code generation, browser automation, and terminal tasks</p>
+            </div>
+          </div>
+
+          <div class="desktop-grid">
+            <!-- WINDOW 1: CODE EDITOR -->
+            <div class="window-card glass-card">
+              <div class="window-titlebar">
+                <span class="win-btn red"></span><span class="win-btn yellow"></span><span class="win-btn green"></span>
+                <span class="win-title">FrontendEngineer.ts — VS Code Sandbox</span>
+              </div>
+              <div class="window-body code-editor">
+<pre><code><span class="kw">export class</span> <span class="cls">MissionControlView</span> <span class="kw">extends</span> <span class="cls">Component</span> {
+  <span class="kw">override</span> <span class="fn">render</span>(): <span class="type">JSX.Element</span> {
+    <span class="kw">return</span> (
+      &lt;<span class="cls">GlassPanel</span> <span class="prop">glow</span>=<span class="str">"cyan"</span>&gt;
+        &lt;<span class="cls">LiveAgentGraph</span> <span class="prop">nodes</span>={<span class="kw">this</span>.props.workers} /&gt;
+      &lt;/<span class="cls">GlassPanel</span>&gt;
+    );
+  }
+}</code></pre>
+              </div>
+            </div>
+
+            <!-- WINDOW 2: BROWSER AUTOMATION -->
+            <div class="window-card glass-card">
+              <div class="window-titlebar">
+                <span class="win-btn red"></span><span class="win-btn yellow"></span><span class="win-btn green"></span>
+                <span class="win-title">Arc Agent Browser Sandbox — Automated QA</span>
+              </div>
+              <div class="window-body browser-sandbox">
+                <div class="browser-bar">
+                  <span class="url">https://staging.hilux.ai/dashboard</span>
+                </div>
+                <div class="browser-viewport">
+                  <div class="mock-ui">
+                    <div class="mock-header"></div>
+                    <div class="mock-cards">
+                      <div class="mock-c"></div><div class="mock-c"></div>
+                    </div>
+                    <div class="mock-cursor"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 8: TERMINAL & LOGS -->
+        <section class="view-panel" id="view-terminal-logs">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Terminal & MessageBus Log Console</h1>
+              <p class="view-subtitle">Raw pub/sub stream from Kafka topics and worker state events</p>
+            </div>
+          </div>
+
+          <div class="terminal-container glass-card">
+            <div class="terminal-header">
+              <span>bash - Hilux OS MessageBus Stream</span>
+              <span class="badge badge-cyan">Topic: worker.*</span>
+            </div>
+            <div class="terminal-body" id="terminalLogs">
+              <!-- Logs dynamic -->
+            </div>
+            <div class="terminal-input-bar">
+              <span class="prompt">hilux@workforce:~$</span>
+              <input type="text" id="termInput" placeholder="Inject command or message (e.g. set-goal 'Launch marketing campaign')...">
+            </div>
+          </div>
+        </section>
+
+        <!-- VIEW 9: HUMAN GATES / ESCALATIONS -->
+        <section class="view-panel" id="view-human-gates">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Human Escalations & Decision Gates</h1>
+              <p class="view-subtitle">Workers requiring human sign-off due to high risk or confidence < 0.70</p>
+            </div>
+          </div>
+
+          <div class="escalation-container glass-card glow-amber">
+            <div class="escalation-header">
+              <span class="badge warning">HIGH URGENCY</span>
+              <span class="esc-title">Escalation ID: #esc-8812</span>
+            </div>
+            <div class="escalation-body">
+              <h4>Worker: [DatabaseEngineer] reports schema migration ambiguity</h4>
+              <p>The proposed database migration alters 1,200,000 existing records in the <code>users</code> table to add vector embedding columns. Budget impact: $4.50. Risk: Medium.</p>
+              <div class="recommendation-box glass-card">
+                <strong>Worker Recommendation:</strong> Proceed with zero-downtime concurrent migration during low-traffic window (03:00 UTC).
+              </div>
+            </div>
+            <div class="escalation-actions">
+              <button class="btn btn-primary" id="approveEscBtn">Approve & Resume Worker</button>
+              <button class="btn btn-danger" id="rejectEscBtn">Reject & Request Alternative</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- RIGHT REASONING & CONTEXT DOCK -->
+      <aside class="reasoning-dock glass-panel">
+        <div class="dock-header">
+          <span class="pulse-dot active"></span>
+          <span>LIVE REASONING DOCK</span>
+        </div>
+
+        <div class="dock-content">
+          <div class="dock-section">
+            <div class="section-title">ACTIVE WORKER THINKING</div>
+            <div class="active-worker-card glass-card">
+              <div class="worker-head">
+                <span class="w-avatar">CTO</span>
+                <div>
+                  <div class="w-name">Chief Technology Officer</div>
+                  <div class="w-role">Executive Layer</div>
+                </div>
+              </div>
+              <div class="thinking-preview" id="thinkingPreview">
+                Evaluating system architecture for DAG topological sorter optimization...
+              </div>
+            </div>
+          </div>
+
+          <div class="dock-section">
+            <div class="section-title">PERFORMANCE METRICS</div>
+            <div class="metric-row">
+              <span>Quality Score</span>
+              <span class="val green">94%</span>
+            </div>
+            <div class="metric-row">
+              <span>Efficiency Score</span>
+              <span class="val cyan">91%</span>
+            </div>
+            <div class="metric-row">
+              <span>Escalation Rate</span>
+              <span class="val">0.0%</span>
+            </div>
+            <div class="metric-row">
+              <span>Autonomy Level</span>
+              <span class="val purple">Executive</span>
+            </div>
+          </div>
+
+          <div class="dock-section">
+            <div class="section-title">KNOWLEDGE SHARED THIS SPRINT</div>
+            <div class="knowledge-chip glass-card">
+              "TypeScript strict mode eliminates common runtime errors"
+            </div>
+            <div class="knowledge-chip glass-card">
+              "Kahn's topological sorter resolves DAG parallel execution layers"
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- ── BOTTOM TIMELINE DOCK ──────────────────────────────────────────────── -->
+    <footer class="bottom-timeline glass-panel">
+      <div class="timeline-left">
+        <button class="btn-play">▶</button>
+        <span class="time-code">00:42:18</span>
+        <span class="status-text">RUNNING AUTONOMOUS WORKFORCE CYCLE #142</span>
+      </div>
+
+      <div class="timeline-center">
+        <div class="scrubber-bar">
+          <div class="scrubber-fill" style="width: 65%;"></div>
+          <div class="scrubber-thumb" style="left: 65%;"></div>
+        </div>
+      </div>
+
+      <div class="timeline-right">
+        <span class="stat-pill">64k Tokens</span>
+        <span class="stat-pill">4.2 GFLOPS</span>
+        <span class="stat-pill glow-emerald">0 Errors</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
