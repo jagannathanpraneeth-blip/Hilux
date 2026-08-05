@@ -14,10 +14,10 @@
  * The CEO never executes tasks directly. They govern.
  */
 
-import { BaseWorker, WorkerGoal } from '../../core/worker/BaseWorker.js';
-import type { MessageBus } from '../../core/communication/MessageBus.js';
-import type { KnowledgeBase } from '../../core/knowledge/KnowledgeBase.js';
-import type { WorkerProfile } from '../../core/worker/BaseWorker.js';
+import { BaseWorker, WorkerGoal } from '../core/worker/BaseWorker.js';
+import type { MessageBus } from '../core/communication/MessageBus.js';
+import type { KnowledgeBase } from '../core/knowledge/KnowledgeBase.js';
+import type { WorkerProfile } from '../core/worker/BaseWorker.js';
 
 export class CEO extends BaseWorker {
   // Department IDs the CEO directly governs

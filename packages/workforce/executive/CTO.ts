@@ -13,9 +13,9 @@
  * - Manages technical debt and engineering velocity
  */
 
-import { BaseWorker, WorkerGoal, WorkerProfile } from '../../core/worker/BaseWorker.js';
-import type { MessageBus } from '../../core/communication/MessageBus.js';
-import type { KnowledgeBase } from '../../core/knowledge/KnowledgeBase.js';
+import { BaseWorker, WorkerGoal, WorkerProfile } from '../core/worker/BaseWorker.js';
+import type { MessageBus } from '../core/communication/MessageBus.js';
+import type { KnowledgeBase } from '../core/knowledge/KnowledgeBase.js';
 
 export class CTO extends BaseWorker {
   private readonly governedDepartments = [

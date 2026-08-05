@@ -249,6 +249,21 @@ export abstract class Department extends EventEmitter {
     await this.assignGoal(goal);
   }
 
+  private async assignPendingGoals(worker: BaseWorker): Promise<void> {
+    if (this.pendingGoals.length === 0) return;
+    const match = this.pendingGoals.find(g => this.goalMatchesWorkerType(g, {
+      role: worker.profile.role,
+      seniority: worker.profile.seniority,
+      minCount: 0, maxCount: 0,
+      specializations: worker.profile.specializations,
+      costPerHour: 0,
+    }));
+    if (match) {
+      this.pendingGoals = this.pendingGoals.filter(g => g.goalId !== match.goalId);
+      await worker.acceptGoal(match);
+    }
+  }
+
   private async assignGoal(goal: WorkerGoal): Promise<void> {
     // Find the best available worker for this goal
     const candidate = this.findBestWorkerFor(goal);

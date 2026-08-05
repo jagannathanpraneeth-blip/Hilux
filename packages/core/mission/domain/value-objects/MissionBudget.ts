@@ -74,7 +74,7 @@ export class MissionBudget extends ValueObject<MissionBudgetProps> {
   }
 
   isExceeded(spentUsd: number, elapsedHours: number): boolean {
-    return spentUsd >= this.props.maxCostUsd || elapsedHours >= this.props.maxDurationHours;
+    return spentUsd > this.props.maxCostUsd || elapsedHours > this.props.maxDurationHours;
   }
 
   isApproachingLimit(spentUsd: number): boolean {

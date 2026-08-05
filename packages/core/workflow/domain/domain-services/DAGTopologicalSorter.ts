@@ -88,7 +88,7 @@ export class DAGTopologicalSorter {
 
     return {
       layers,
-      criticalPath: this.computeCriticalPath(dag),
+      criticalPath: this.computeCriticalPath(dag, layers),
       parallelismFactor: layers.length > 0
         ? nodes.length / layers.length
         : 0,
@@ -99,7 +99,7 @@ export class DAGTopologicalSorter {
    * Critical path: the longest chain of sequential dependencies.
    * Tasks on the critical path are the bottleneck — prioritize them.
    */
-  private computeCriticalPath(dag: MissionDAG): string[] {
+  private computeCriticalPath(dag: MissionDAG, layers: ExecutionLayer[]): string[] {
     const { nodes, edges } = dag;
     const longestPath = new Map<string, number>();
     const pathTo = new Map<string, string[]>();
@@ -109,8 +109,8 @@ export class DAGTopologicalSorter {
       pathTo.set(node.taskId, [node.taskId]);
     }
 
-    // Sort topologically first
-    const sorted = this.computeSchedule(dag).layers.flatMap(l => l.taskIds);
+    // Sort topologically using already computed layers
+    const sorted = layers.flatMap(l => l.taskIds);
 
     for (const taskId of sorted) {
       const predecessors = edges.filter(e => e.to === taskId).map(e => e.from);
@@ -124,7 +124,7 @@ export class DAGTopologicalSorter {
     }
 
     // Find task with maximum path length
-    let maxLength = 0;
+    let maxLength = -1;
     let criticalPath: string[] = [];
     for (const [taskId, length] of longestPath) {
       if (length > maxLength) {

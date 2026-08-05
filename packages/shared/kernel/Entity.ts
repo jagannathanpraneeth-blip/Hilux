@@ -18,6 +18,7 @@ export abstract class Entity<TId> {
 
   public equals(other: Entity<TId>): boolean {
     if (!(other instanceof Entity)) return false;
+    if (this.constructor !== other.constructor) return false;
     if (this === other) return true;
     return JSON.stringify(this._id) === JSON.stringify(other._id);
   }

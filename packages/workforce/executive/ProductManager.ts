@@ -4,9 +4,9 @@
  * Owns the product vision, user research, roadmap, and feature prioritization.
  * Works closely with Engineering (via CTO) and Marketing.
  */
-import { BaseWorker, WorkerGoal, WorkerProfile } from '../../core/worker/BaseWorker.js';
-import type { MessageBus } from '../../core/communication/MessageBus.js';
-import type { KnowledgeBase } from '../../core/knowledge/KnowledgeBase.js';
+import { BaseWorker, WorkerGoal, WorkerProfile } from '../core/worker/BaseWorker.js';
+import type { MessageBus } from '../core/communication/MessageBus.js';
+import type { KnowledgeBase } from '../core/knowledge/KnowledgeBase.js';
 
 export class ProductManager extends BaseWorker {
   constructor(messageBus: MessageBus, knowledgeBase: KnowledgeBase) {

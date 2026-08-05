@@ -18,24 +18,18 @@ import { EventEmitter } from 'events';
 type MessageHandler = (message: Record<string, unknown>) => Promise<void>;
 
 export class MessageBus {
-  private readonly emitter = new EventEmitter();
   private readonly subscriptions: Map<string, MessageHandler[]> = new Map();
   private messageCount = 0;
 
-  constructor() {
-    // Allow many listeners — large workforce
-    this.emitter.setMaxListeners(10_000);
-  }
+  constructor() {}
 
   subscribe(topic: string, handler: MessageHandler): void {
     const handlers = this.subscriptions.get(topic) ?? [];
     handlers.push(handler);
     this.subscriptions.set(topic, handlers);
-    this.emitter.on(topic, handler);
   }
 
   unsubscribe(topic: string): void {
-    this.emitter.removeAllListeners(topic);
     this.subscriptions.delete(topic);
   }
 
@@ -51,10 +45,14 @@ export class MessageBus {
 
     const handlers = this.subscriptions.get(topic) ?? [];
     await Promise.allSettled(
-      handlers.map(handler => handler(envelope))
+      handlers.map(async handler => {
+        try {
+          await handler(envelope);
+        } catch (err) {
+          console.error(`[MessageBus] Handler error on topic "${topic}":`, err);
+        }
+      })
     );
-
-    this.emitter.emit(topic, envelope);
   }
 
   getStats(): { topics: number; totalMessages: number } {
